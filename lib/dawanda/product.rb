@@ -1,9 +1,9 @@
 module Dawanda
-  
+
   # = Product
   #
   # Represents a single Dawanda product.  Has the following attributes:
-  
+
   #
   # [id] The unique identifier for this product
   # [name] The title of this product
@@ -16,9 +16,9 @@ module Dawanda
   # [materials] Any array of materials that was used in the production of this item
   #
   class Product
-    
+
     include Dawanda::Model
-    
+
     finder :all, '/shops/:shop_id/products'
     finder :all, '/categories/:category_id/products'
     finder :all, '/shop_categories/:shop_category_id/products'
@@ -27,34 +27,35 @@ module Dawanda
     finder :all, '/product/:method'
     finder :all, '/pinboards/:pinboard_id/products'
     finder :generic, '/shops/window_products', :window_products_by_user_id
-    
+
     finder :one, '/products/:id'
-    
+
     attribute :created, :created_at
     attribute :category_id, [ :category, :id ]
     attribute :user_id, [ :user => :id ]
-    
-    attributes :id, :name, :description, :created_at, :view_count, :tags,
-               :ending, :quantity, :materials, :price, :restful_path, :product_url, :default_image, :user
- 
+
+    attributes :id, :name, :description, :created_at, :view_count, :tags, :user,
+               :ending, :quantity, :materials, :price, :restful_path, :product_url,
+               :default_image, :additional_images
+
     # Time that this product was created
     #
     def created_at
       Time.parse(created)
     end
-    
+
     # Time that this product is ending (will be removed from store)
     #
     def ending_at
       Time.parse(ending)
     end
-    
+
     # Search for users with given keyword
     def self.search(keyword, params = {})
       params.update(:keyword => keyword)
       self.find_all_by_method('search', params)
     end
-    
+
     # Search for users with given keyword and color
     def self.search_by_color(color, keyword, params = {})
       params.update(:keyword => keyword)
@@ -63,20 +64,13 @@ module Dawanda
 
     # backward compatability, remove at next major version bump
     def images
-      warn 'Deprecation Warning: please use the new default_image()-method'
-      [
-       {
-         'image_80x80' => default_image['thumb'],
-         'image_160x120' => default_image['listview'],
-         'image_800x600' => default_image['big']
-       }
-      ]
+      [default_image] + additional_images
     end
-    
+
     def category(params = {})
       Category.find_by_id(category_id)
     end
-    
+
     def shop(params = {})
       Shop.find_by_user_id(user["id"])
     end
