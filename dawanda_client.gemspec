@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
      "README.rdoc"
   ]
   s.files = [
-    ".gems",
      "LICENSE",
      "README.rdoc",
      "Rakefile",
@@ -78,4 +77,3 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<oauth>, ["= 0.4.0"])
   end
 end
-
